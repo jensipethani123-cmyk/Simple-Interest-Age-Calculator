@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Project 05 | Finance & Age</title>
+  <style>
+    :root { --ink: #17252b; --muted: #68777a; --paper: #f4f1e9; --card: #fffdf8; --green: #176b5f; --green-dark: #0d4945; --sun: #f0a54a; --line: #d8ded6; --shadow: 0 20px 55px rgba(23, 37, 43, .12); }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; color: var(--ink); background: var(--paper); font-family: Georgia, "Times New Roman", serif; }
+    body::before { content: ""; position: fixed; inset: 0; pointer-events: none; opacity: .35; background-image: radial-gradient(#c4d0c8 1px, transparent 1px); background-size: 18px 18px; mask-image: linear-gradient(black, transparent 72%); }
+    .shell { position: relative; width: min(1080px, calc(100% - 40px)); margin: auto; padding: 34px 0 60px; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 70px; }
+    .brand { display: flex; align-items: center; gap: 12px; color: var(--ink); font: 700 13px Arial, sans-serif; letter-spacing: .1em; text-transform: uppercase; }
+    .mark { display: grid; place-items: center; width: 36px; height: 36px; color: white; background: var(--green); border-radius: 50%; font: 20px Georgia, serif; }
+    .status { color: var(--muted); font: 12px Arial, sans-serif; }
+    .status::before { content: ""; display: inline-block; width: 7px; height: 7px; margin-right: 8px; background: var(--sun); border-radius: 50%; }
+    .eyebrow { margin: 0 0 14px; color: var(--green); font: 700 11px Arial, sans-serif; letter-spacing: .16em; text-transform: uppercase; }
+    h1 { max-width: 720px; margin: 0; font-size: clamp(44px, 7vw, 78px); line-height: .98; font-weight: 400; }
+    .lead { max-width: 550px; margin: 24px 0 38px; color: var(--muted); font: 16px/1.6 Arial, sans-serif; }
+    .tabs { display: flex; gap: 5px; width: fit-content; margin-bottom: 24px; padding: 4px; background: #e2ebe4; border-radius: 6px; }
+    button { cursor: pointer; border: 0; padding: 13px 18px; font: 700 11px Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; transition: transform .2s, background .2s; }
+    button:hover { transform: translateY(-2px); }
+    .tab { color: var(--muted); background: transparent; border-radius: 3px; }
+    .tab.active { color: white; background: var(--green); }
+    .view { display: none; }
+    .view.active { display: block; animation: rise .4s ease-out both; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(280px, .85fr); gap: 24px; align-items: start; }
+    .panel { background: rgba(255, 253, 248, .93); border: 1px solid var(--line); box-shadow: var(--shadow); }
+    .form-panel { padding: 30px; }
+    h2 { margin: 0; font-size: 27px; font-weight: 400; }
+    .panel-copy { margin: 9px 0 28px; color: var(--muted); font: 13px/1.5 Arial, sans-serif; }
+    .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    label { display: grid; gap: 9px; color: var(--muted); font: 10px Arial, sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+    label.full { grid-column: 1 / -1; }
+    input { width: 100%; padding: 11px 0; border: 0; border-bottom: 1px solid var(--line); outline: 0; color: var(--ink); background: transparent; font: 19px Georgia, serif; }
+    input:focus { border-color: var(--green); }
+    .actions { display: flex; gap: 11px; margin-top: 31px; }
+    .primary { color: white; background: var(--green); }
+    .primary:hover { background: var(--green-dark); }
+    .secondary { color: var(--green-dark); background: #e2ebe4; }
+    .message { min-height: 18px; margin: 14px 0 0; color: var(--green); font: 12px Arial, sans-serif; }
+    .result-panel { padding: 28px; color: white; background: var(--green-dark); }
+    .result-kicker { margin: 0 0 46px; color: #9ccbc1; font: 11px Arial, sans-serif; letter-spacing: .14em; text-transform: uppercase; }
+    .result-panel h3 { margin: 0 0 25px; font-size: 35px; font-weight: 400; }
+    .stat { padding: 17px 0; border-top: 1px solid rgba(255,255,255,.2); }
+    .stat-label { display: block; margin-bottom: 7px; color: #9ccbc1; font: 10px Arial, sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+    .stat-value { font-size: 24px; }
+    .hint { margin: 25px 0 0; color: #b9d8d1; font: 12px/1.5 Arial, sans-serif; }
+    .age-result { margin-top: 29px; padding: 24px; color: white; background: var(--green-dark); }
+    .age-result small { color: #9ccbc1; font: 10px Arial, sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+    .age-value { margin: 8px 0 0; font-size: 40px; }
+    @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 720px) { .shell { width: min(100% - 28px, 560px); padding-top: 22px; } .topbar { margin-bottom: 48px; } .status { display: none; } .layout { grid-template-columns: 1fr; } .fields { grid-template-columns: 1fr; gap: 17px; } label.full { grid-column: auto; } .form-panel, .result-panel { padding: 22px; } .tabs { width: 100%; } .tab { flex: 1; padding-inline: 8px; } }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar"><div class="brand"><span class="mark">5</span> Project 05</div><div class="status">Two practical calculators</div></header>
+    <section class="intro"><p class="eyebrow">Finance &amp; age lab</p><h1>See the numbers<br>in a new light.</h1><p class="lead">A calm workspace for exploring interest, comparing growth, and finding your age in the current year.</p></section>
+    <nav class="tabs" aria-label="Calculator type"><button class="tab active" type="button" data-view="interest">Interest calculator</button><button class="tab" type="button" data-view="age">Age calculator</button></nav>
+
+    <section class="view active" id="interestView">
+      <div class="layout"><form class="panel form-panel" id="interestForm"><p class="eyebrow">Part A / money</p><h2>Interest calculator</h2><p class="panel-copy">Compare simple and compound returns on the same principal.</p><div class="fields"><label class="full">Principal (Rs.) <input id="principal" type="number" min="0" step="any" placeholder="e.g. 50000" required></label><label>Rate (%) <input id="rate" type="number" min="0" step="any" placeholder="e.g. 8" required></label><label>Time (years) <input id="time" type="number" min="0" step="any" placeholder="e.g. 3" required></label></div><div class="actions"><button class="primary" type="submit">Calculate interest</button><button class="secondary" type="button" id="clearInterest">Clear</button></div><p class="message" id="interestMessage" aria-live="polite"></p></form><aside class="result-panel"><p class="result-kicker">Your projection / 01</p><h3 id="interestHeadline">Enter your figures.</h3><div class="stat"><span class="stat-label">Simple interest</span><span class="stat-value" id="simpleResult">Rs. --</span></div><div class="stat"><span class="stat-label">Compound interest</span><span class="stat-value" id="compoundResult">Rs. --</span></div><div class="stat"><span class="stat-label">Difference</span><span class="stat-value" id="differenceResult">Rs. --</span></div><p class="hint">Compound interest is calculated annually, matching the Python program.</p></aside></div>
+    </section>
+
+    <section class="view" id="ageView"><div class="layout"><form class="panel form-panel" id="ageForm"><p class="eyebrow">Part B / time</p><h2>Age calculator</h2><p class="panel-copy">Find your current age using the project year, 2026.</p><label>Birth year <input id="birthYear" type="number" min="1900" max="2026" placeholder="e.g. 2004" required></label><div class="actions"><button class="primary" type="submit">Calculate age</button><button class="secondary" type="button" id="clearAge">Clear</button></div><p class="message" id="ageMessage" aria-live="polite"></p><div class="age-result"><small>Age in 2026</small><p class="age-value" id="ageResult">-- years</p></div></form><aside class="result-panel"><p class="result-kicker">Time marker / 02</p><h3>One year can tell a story.</h3><p class="hint">Your result uses the fixed current year from the Python exercise, so it stays consistent with the original output.</p></aside></div></section>
+  </main>
+  <script>
+    const money = value => `Rs. ${value.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    document.querySelectorAll('[data-view]').forEach(tab => tab.addEventListener('click', () => { document.querySelectorAll('.tab').forEach(item => item.classList.toggle('active', item === tab)); document.querySelectorAll('.view').forEach(view => view.classList.toggle('active', view.id === `${tab.dataset.view}View`)); }));
+    document.getElementById('interestForm').addEventListener('submit', event => { event.preventDefault(); const principal = Number(document.getElementById('principal').value); const rate = Number(document.getElementById('rate').value); const time = Number(document.getElementById('time').value); const simple = principal * rate * time / 100; const compound = principal * ((1 + rate / 100) ** time) - principal; document.getElementById('interestHeadline').textContent = `${time} year projection`; document.getElementById('simpleResult').textContent = money(simple); document.getElementById('compoundResult').textContent = money(compound); document.getElementById('differenceResult').textContent = money(compound - simple); document.getElementById('interestMessage').textContent = 'Calculation complete.'; });
+    document.getElementById('clearInterest').addEventListener('click', () => { document.getElementById('interestForm').reset(); ['simpleResult', 'compoundResult', 'differenceResult'].forEach(id => document.getElementById(id).textContent = 'Rs. --'); document.getElementById('interestHeadline').textContent = 'Enter your figures.'; document.getElementById('interestMessage').textContent = ''; });
+    document.getElementById('ageForm').addEventListener('submit', event => { event.preventDefault(); const birthYear = Number(document.getElementById('birthYear').value); if (birthYear > 2026) { document.getElementById('ageMessage').textContent = 'Birth year cannot be after 2026.'; return; } document.getElementById('ageResult').textContent = `${2026 - birthYear} years`; document.getElementById('ageMessage').textContent = 'Age calculated.'; });
+    document.getElementById('clearAge').addEventListener('click', () => { document.getElementById('ageForm').reset(); document.getElementById('ageResult').textContent = '-- years'; document.getElementById('ageMessage').textContent = ''; });
+  </script>
+</body>
+</html>
