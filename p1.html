@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Project 4 | Personal Studio</title>
+  <style>
+    :root {
+      --ink: #18252b;
+      --muted: #66767a;
+      --paper: #f6f4ee;
+      --card: #fffdf8;
+      --teal: #0c7770;
+      --teal-dark: #07524f;
+      --coral: #ef775f;
+      --line: #d9dfd9;
+      --shadow: 0 24px 60px rgba(24, 37, 43, .12);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: Georgia, "Times New Roman", serif;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .38;
+      background-image: radial-gradient(#c7d1cb 1px, transparent 1px);
+      background-size: 18px 18px;
+      mask-image: linear-gradient(to bottom, black, transparent 75%);
+    }
+    .shell { position: relative; width: min(1120px, calc(100% - 40px)); margin: 0 auto; padding: 34px 0 56px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 58px; }
+    .brand { display: flex; align-items: center; gap: 12px; font: 700 14px/1.2 Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+    .brand-mark { display: grid; place-items: center; width: 34px; height: 34px; color: white; background: var(--teal); border-radius: 50%; font-size: 18px; }
+    .status { display: flex; align-items: center; gap: 8px; color: var(--muted); font: 12px Arial, sans-serif; }
+    .status-dot { width: 8px; height: 8px; background: var(--coral); border-radius: 50%; }
+    .mode-switch { display: flex; gap: 4px; margin: 0 0 40px; padding: 4px; width: fit-content; background: #e6eeea; border-radius: 6px; }
+    .mode-button { padding: 10px 15px; color: var(--muted); background: transparent; border-radius: 3px; }
+    .mode-button:hover { transform: none; background: rgba(255,255,255,.55); }
+    .mode-button.active { color: white; background: var(--teal); }
+    .mode { display: none; }
+    .mode.active { display: block; }
+    .intro { max-width: 680px; margin-bottom: 34px; animation: rise .55s ease-out both; }
+    .eyebrow { margin: 0 0 14px; color: var(--coral); font: 700 12px Arial, sans-serif; letter-spacing: .16em; text-transform: uppercase; }
+    h1 { margin: 0; font-size: clamp(42px, 7vw, 78px); line-height: .98; font-weight: 400; letter-spacing: 0; }
+    .intro p { max-width: 540px; margin: 22px 0 0; color: var(--muted); font: 16px/1.6 Arial, sans-serif; }
+    .workspace { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(320px, .92fr); gap: 24px; align-items: start; }
+    .panel { background: rgba(255, 253, 248, .9); border: 1px solid rgba(217, 223, 217, .9); box-shadow: var(--shadow); }
+    .form-panel { padding: 30px; animation: rise .65s .08s ease-out both; }
+    .panel-head { display: flex; justify-content: space-between; gap: 20px; align-items: start; margin-bottom: 28px; }
+    h2 { margin: 0; font-size: 25px; font-weight: 400; }
+    .progress-wrap { min-width: 150px; }
+    .progress-label { display: flex; justify-content: space-between; margin-bottom: 8px; color: var(--muted); font: 11px Arial, sans-serif; text-transform: uppercase; letter-spacing: .08em; }
+    .progress { height: 6px; overflow: hidden; background: #e5e9e3; border-radius: 4px; }
+    .progress-bar { width: 0%; height: 100%; background: var(--coral); transition: width .25s ease; }
+    .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    label { display: grid; gap: 9px; color: var(--muted); font: 11px Arial, sans-serif; letter-spacing: .1em; text-transform: uppercase; }
+    label.full { grid-column: 1 / -1; }
+    input { width: 100%; padding: 12px 0; border: 0; border-bottom: 1px solid var(--line); outline: 0; color: var(--ink); background: transparent; font: 18px Georgia, serif; transition: border-color .2s; }
+    input:focus { border-color: var(--teal); }
+    .actions { display: flex; gap: 12px; margin-top: 32px; }
+    button { cursor: pointer; border: 0; padding: 13px 19px; font: 700 12px Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; transition: transform .2s, background .2s; }
+    button:hover { transform: translateY(-2px); }
+    .primary { color: white; background: var(--teal); }
+    .primary:hover { background: var(--teal-dark); }
+    .secondary { color: var(--teal-dark); background: #e6eeea; }
+    .preview-panel { position: sticky; top: 24px; padding: 28px; color: white; background: var(--teal-dark); overflow: hidden; animation: rise .65s .16s ease-out both; }
+    .preview-panel::after { content: ""; position: absolute; width: 220px; height: 220px; right: -100px; bottom: -110px; border: 1px solid rgba(255,255,255,.22); border-radius: 50%; box-shadow: 0 0 0 24px rgba(255,255,255,.04), 0 0 0 48px rgba(255,255,255,.03); }
+    .preview-kicker { position: relative; z-index: 1; margin: 0 0 54px; color: #9bd0c5; font: 11px Arial, sans-serif; letter-spacing: .14em; text-transform: uppercase; }
+    .avatar { position: relative; z-index: 1; display: grid; place-items: center; width: 76px; height: 76px; margin-bottom: 22px; color: var(--teal-dark); background: var(--coral); border-radius: 50%; font: 28px Georgia, serif; }
+    .preview-name { position: relative; z-index: 1; min-height: 42px; margin: 0; font-size: 34px; font-weight: 400; }
+    .preview-meta { position: relative; z-index: 1; margin: 9px 0 30px; color: #b5d5cf; font: 13px Arial, sans-serif; }
+    .details { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 20px 14px; padding-top: 22px; border-top: 1px solid rgba(255,255,255,.18); }
+    .detail-label { display: block; margin-bottom: 5px; color: #8fbdb5; font: 10px Arial, sans-serif; letter-spacing: .1em; text-transform: uppercase; }
+    .detail-value { color: white; font: 16px Georgia, serif; overflow-wrap: anywhere; }
+    .saved { min-height: 18px; margin: 14px 0 0; color: var(--teal); font: 12px Arial, sans-serif; }
+    .calculator-panel { max-width: 760px; padding: 30px; animation: rise .65s .08s ease-out both; }
+    .calculator-grid { display: grid; grid-template-columns: 1fr 150px 1fr; gap: 16px; align-items: end; }
+    .calculator-grid label { min-width: 0; }
+    select { width: 100%; padding: 12px 8px; border: 0; border-bottom: 1px solid var(--line); outline: 0; color: var(--ink); background: transparent; font: 18px Georgia, serif; }
+    select:focus { border-color: var(--teal); }
+    .result-box { margin-top: 32px; padding: 24px; color: white; background: var(--teal-dark); }
+    .result-label { margin: 0 0 10px; color: #9bd0c5; font: 11px Arial, sans-serif; letter-spacing: .14em; text-transform: uppercase; }
+    .result-value { min-height: 43px; margin: 0; font-size: 34px; overflow-wrap: anywhere; }
+    .result-status { min-height: 18px; margin: 12px 0 0; color: #b5d5cf; font: 12px Arial, sans-serif; }
+    @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 760px) {
+      .shell { width: min(100% - 28px, 560px); padding-top: 22px; }
+      .topbar { margin-bottom: 42px; }
+      .status { display: none; }
+      .workspace { grid-template-columns: 1fr; }
+      .mode-switch { margin-bottom: 30px; }
+      .preview-panel { position: static; }
+      .fields { grid-template-columns: 1fr; gap: 17px; }
+      label.full { grid-column: auto; }
+      .form-panel, .preview-panel { padding: 22px; }
+      .calculator-panel { padding: 22px; }
+      .calculator-grid { grid-template-columns: 1fr; gap: 17px; }
+      .preview-kicker { margin-bottom: 38px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">P</span> Project 04</div>
+      <div class="status"><span class="status-dot"></span> Profile studio</div>
+    </header>
+
+    <section class="intro">
+      <p class="eyebrow">Personal introduction</p>
+      <h1>Make your<br>first impression count.</h1>
+      <p>Fill in the details and shape a clear, memorable introduction card in real time.</p>
+    </section>
+
+    <section class="workspace">
+      <form class="panel form-panel" id="profileForm">
+        <div class="panel-head">
+          <h2>Your details</h2>
+          <div class="progress-wrap">
+            <div class="progress-label"><span>Complete</span><span id="progressText">0%</span></div>
+            <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+          </div>
+        </div>
+        <div class="fields">
+          <label class="full">Name <input id="name" type="text" placeholder="e.g. Aisha Patel" autocomplete="name"></label>
+          <label>Age <input id="age" type="number" min="1" max="120" placeholder="e.g. 21"></label>
+          <label>City <input id="city" type="text" placeholder="e.g. Ahmedabad" autocomplete="address-level2"></label>
+          <label>Hobby <input id="hobby" type="text" placeholder="e.g. Photography"></label>
+          <label>Language <input id="language" type="text" placeholder="e.g. Gujarati"></label>
+        </div>
+        <div class="actions">
+          <button class="primary" type="submit">Save profile</button>
+          <button class="secondary" type="button" id="resetButton">Reset</button>
+        </div>
+        <p class="saved" id="savedMessage" aria-live="polite"></p>
+      </form>
+
+      <aside class="panel preview-panel" aria-label="Live profile preview">
+        <p class="preview-kicker">Live preview / 01</p>
+        <div class="avatar" id="avatar">?</div>
+        <h2 class="preview-name" id="previewName">Your name</h2>
+        <p class="preview-meta" id="previewMeta">A short introduction starts here.</p>
+        <div class="details">
+          <div><span class="detail-label">Hobby</span><span class="detail-value" id="previewHobby">Add a hobby</span></div>
+          <div><span class="detail-label">Language</span><span class="detail-value" id="previewLanguage">Add a language</span></div>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const fields = ['name', 'age', 'city', 'hobby', 'language'];
+    const form = document.getElementById('profileForm');
+    const savedMessage = document.getElementById('savedMessage');
+
+    function updatePreview() {
+      const values = Object.fromEntries(fields.map((field) => [field, document.getElementById(field).value.trim()]));
+      const completed = fields.filter((field) => values[field]).length;
+      document.getElementById('progressBar').style.width = `${completed / fields.length * 100}%`;
+      document.getElementById('progressText').textContent = `${Math.round(completed / fields.length * 100)}%`;
+      document.getElementById('previewName').textContent = values.name || 'Your name';
+      document.getElementById('previewMeta').textContent = values.age && values.city ? `${values.age} years old · ${values.city}` : 'A short introduction starts here.';
+      document.getElementById('previewHobby').textContent = values.hobby || 'Add a hobby';
+      document.getElementById('previewLanguage').textContent = values.language || 'Add a language';
+      document.getElementById('avatar').textContent = values.name ? values.name.charAt(0).toUpperCase() : '?';
+      return values;
+    }
+
+    fields.forEach((field) => document.getElementById(field).addEventListener('input', updatePreview));
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      localStorage.setItem('project4Profile', JSON.stringify(updatePreview()));
+      savedMessage.textContent = 'Profile saved in this browser.';
+    });
+    document.getElementById('resetButton').addEventListener('click', () => {
+      form.reset();
+      localStorage.removeItem('project4Profile');
+      savedMessage.textContent = '';
+      updatePreview();
+    });
+
+    const savedProfile = JSON.parse(localStorage.getItem('project4Profile') || 'null');
+    if (savedProfile) fields.forEach((field) => { document.getElementById(field).value = savedProfile[field] || ''; });
+    updatePreview();
+  </script>
+</body>
+</html>
